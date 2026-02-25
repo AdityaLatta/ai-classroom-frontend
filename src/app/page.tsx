@@ -2,16 +2,20 @@
 
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
+  const hasChecked = useRef(false);
 
   useEffect(() => {
     if (isLoading) {
-      useAuthStore.getState().checkSession();
+      if (!hasChecked.current) {
+        hasChecked.current = true;
+        useAuthStore.getState().checkSession();
+      }
     } else {
       if (isAuthenticated) {
         router.push("/dashboard");

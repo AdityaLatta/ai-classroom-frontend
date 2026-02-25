@@ -10,9 +10,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
+import { selectRole } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { FormError } from "@/components/ui/form-error";
 import { cn } from "@/lib/utils";
 
 type Role = "STUDENT" | "INSTRUCTOR";
@@ -51,7 +52,7 @@ export function RoleSelectionDialog({
     setError(null);
     setIsSubmitting(true);
     try {
-      const { data } = await api.post("/auth/select-role", { role: selected });
+      const data = await selectRole(selected);
       // Update just the role in the store without touching the access token
       if (user) {
         useAuthStore.setState({ user: { ...user, role: data.role } });
@@ -103,11 +104,7 @@ export function RoleSelectionDialog({
           ))}
         </div>
 
-        {error && (
-          <div className="text-sm text-destructive font-medium text-center">
-            {error}
-          </div>
-        )}
+        <FormError message={error} className="text-center" />
 
         <Button
           onClick={handleConfirm}

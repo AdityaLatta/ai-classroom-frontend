@@ -5,6 +5,8 @@ import { ShieldX } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import type { UserRole } from "@/types/auth";
 
+// TODO: Use this component to wrap instructor-only or admin-only route segments
+// when dedicated pages are added (e.g., /courses/create, /admin/*).
 interface RoleGuardProps {
   allowedRoles: UserRole[];
   children: ReactNode;

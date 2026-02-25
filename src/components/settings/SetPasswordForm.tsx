@@ -21,8 +21,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { setPasswordSchema } from "@/lib/validations/auth";
-import { api } from "@/lib/api";
+import { setPassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { FormError } from "@/components/ui/form-error";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -40,9 +41,7 @@ export function SetPasswordForm() {
   async function onSubmit(values: z.infer<typeof setPasswordSchema>) {
     setError(null);
     try {
-      await api.post("/auth/set-password", {
-        password: values.password,
-      });
+      await setPassword(values.password);
       toast.success(
         "Password set successfully. You can now log in with your email and password.",
       );
@@ -74,7 +73,12 @@ export function SetPasswordForm() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -87,18 +91,19 @@ export function SetPasswordForm() {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
-            )}
+            <FormError message={error} />
 
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? "Setting..." : "Set Password"}

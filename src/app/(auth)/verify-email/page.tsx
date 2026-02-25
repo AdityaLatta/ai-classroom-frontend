@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { api } from "@/lib/api";
+import { verifyEmail } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
@@ -26,11 +26,7 @@ function VerifyEmailContent() {
 
     async function verify() {
       try {
-        const { data } = await api.post(
-          "/auth/verify-email",
-          { token },
-          { signal: controller.signal },
-        );
+        const data = await verifyEmail(token!, { signal: controller.signal });
         setStatus("success");
         setMessage(
           data.message || "Email verified successfully. You can now log in.",

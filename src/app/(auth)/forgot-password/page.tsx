@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "@/lib/api";
+import { forgotPassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -34,7 +34,7 @@ export default function ForgotPasswordPage() {
 
   async function onSubmit(values: z.infer<typeof forgotPasswordSchema>) {
     try {
-      await api.post("/auth/forgot-password", values);
+      await forgotPassword(values.email);
       setSubmitted(true);
       toast.success("If an account exists, a reset link has been sent.");
     } catch (err: unknown) {

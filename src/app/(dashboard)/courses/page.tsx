@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCourses } from "@/hooks/use-courses";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { CourseCard } from "@/components/courses/CourseCard";
 import { useAuthStore } from "@/store/auth.store";
 import { Loader2, Plus, Search } from "lucide-react";
@@ -20,18 +21,10 @@ const CourseFormDialog = dynamic(
 export default function CoursesPage() {
   const { user } = useAuthStore();
   const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 300);
   const [page, setPage] = useState(1);
   const [createOpen, setCreateOpen] = useState(false);
   const limit = 9;
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(search);
-      setPage(1);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [search]);
 
   const { data, isLoading, error } = useCourses({
     page,
@@ -63,6 +56,7 @@ export default function CoursesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-9"
+          aria-label="Search courses"
         />
       </div>
 

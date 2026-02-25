@@ -5,3 +5,6 @@ coverage
 .github
 *.md
 .git
+.env*
+.vscode
+.claude

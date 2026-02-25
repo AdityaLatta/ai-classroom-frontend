@@ -21,10 +21,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { changePasswordSchema } from "@/lib/validations/auth";
-import { api } from "@/lib/api";
+import { changePassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
+import { FormError } from "@/components/ui/form-error";
 import { toast } from "sonner";
 import { useState } from "react";
 
@@ -45,10 +46,7 @@ export function ChangePasswordForm() {
   async function onSubmit(values: z.infer<typeof changePasswordSchema>) {
     setError(null);
     try {
-      await api.post("/auth/change-password", {
-        currentPassword: values.currentPassword,
-        newPassword: values.newPassword,
-      });
+      await changePassword(values.currentPassword, values.newPassword);
       toast.success("Password changed successfully. Please log in again.");
       await logout();
       router.push("/login");
@@ -78,7 +76,12 @@ export function ChangePasswordForm() {
                 <FormItem>
                   <FormLabel>Current Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -91,7 +94,12 @@ export function ChangePasswordForm() {
                 <FormItem>
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -104,18 +112,19 @@ export function ChangePasswordForm() {
                 <FormItem>
                   <FormLabel>Confirm New Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
-            )}
+            <FormError message={error} />
 
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? "Changing..." : "Change Password"}

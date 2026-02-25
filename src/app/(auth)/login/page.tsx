@@ -14,12 +14,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/auth.store";
-import { api } from "@/lib/api";
+import { loginUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FormError } from "@/components/ui/form-error";
 import Link from "next/link";
 
 const loginSchema = z.object({
@@ -44,7 +45,7 @@ export default function LoginPage() {
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setError(null);
     try {
-      const { data } = await api.post("/auth/login", values);
+      const data = await loginUser(values);
       login(data.user, data.accessToken);
       router.push("/dashboard");
     } catch (err: unknown) {
@@ -82,7 +83,12 @@ export default function LoginPage() {
                 <FormItem className="text-left">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="current-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,11 +104,7 @@ export default function LoginPage() {
               </Link>
             </div>
 
-            {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
-            )}
+            <FormError message={error} />
 
             <Button
               type="submit"

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCourse } from "@/hooks/use-courses";
 import { useAuthStore } from "@/store/auth.store";
 import { ArrowLeft, Edit, Loader2, Trash2 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 
 const CourseFormDialog = dynamic(
@@ -77,13 +78,9 @@ export default function CourseDetailPage({
           <h1 className="text-3xl font-bold tracking-tight">{course.title}</h1>
           <p className="text-sm text-muted-foreground">
             By {course.instructor?.name ?? "Unknown"} &middot; Created{" "}
-            {new Date(course.createdAt).toLocaleDateString()}
+            {formatDate(course.createdAt)}
             {course.updatedAt !== course.createdAt && (
-              <>
-                {" "}
-                &middot; Updated{" "}
-                {new Date(course.updatedAt).toLocaleDateString()}
-              </>
+              <> &middot; Updated {formatDate(course.updatedAt)}</>
             )}
           </p>
         </div>

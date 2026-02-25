@@ -32,7 +32,7 @@ export function useLogoutAll() {
   return useMutation({
     mutationFn: logoutAllSessions,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: sessionKeys.list() });
+      queryClient.clear();
     },
   });
 }

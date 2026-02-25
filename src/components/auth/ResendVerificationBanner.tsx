@@ -2,13 +2,23 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
+import { resendVerification } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
 
+const COOLDOWN_KEY = "resend-verification-ts";
+const COOLDOWN_SECONDS = 60;
+
+function getRemainingCooldown(): number {
+  const stored = sessionStorage.getItem(COOLDOWN_KEY);
+  if (!stored) return 0;
+  const elapsed = Math.floor((Date.now() - Number(stored)) / 1000);
+  return Math.max(0, COOLDOWN_SECONDS - elapsed);
+}
+
 export function ResendVerificationBanner() {
-  const [cooldown, setCooldown] = useState(0);
+  const [cooldown, setCooldown] = useState(() => getRemainingCooldown());
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
@@ -22,9 +32,10 @@ export function ResendVerificationBanner() {
   const handleResend = useCallback(async () => {
     setIsSending(true);
     try {
-      await api.post("/auth/resend-verification", {});
+      await resendVerification();
       toast.success("Verification email sent! Check your inbox.");
-      setCooldown(60);
+      sessionStorage.setItem(COOLDOWN_KEY, String(Date.now()));
+      setCooldown(COOLDOWN_SECONDS);
     } catch (err: unknown) {
       toast.error(
         getApiErrorMessage(err, "Failed to resend verification email."),

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Course } from "@/types";
 import { useAuthStore } from "@/store/auth.store";
+import { formatDate } from "@/lib/utils";
 
 interface CourseCardProps {
   course: Course;
@@ -31,7 +32,7 @@ export function CourseCard({ course }: CourseCardProps) {
           </p>
           <div className="flex items-center justify-between text-xs text-muted-foreground">
             <span>{course.instructor?.name}</span>
-            <span>{new Date(course.createdAt).toLocaleDateString()}</span>
+            <span>{formatDate(course.createdAt)}</span>
           </div>
         </CardContent>
       </Card>

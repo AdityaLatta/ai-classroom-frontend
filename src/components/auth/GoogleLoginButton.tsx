@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { api } from "@/lib/api";
+import { googleLogin } from "@/lib/services/auth.service";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { FormError } from "@/components/ui/form-error";
 import { env } from "@/env";
 
 declare global {
@@ -18,6 +19,7 @@ declare global {
             element: HTMLElement,
             config: Record<string, unknown>,
           ) => void;
+          cancel: () => void;
         };
       };
     };
@@ -35,6 +37,33 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const buttonRef = useRef<HTMLDivElement>(null);
 
+  const handleGoogleResponse = useCallback(
+    async (response: { credential: string }) => {
+      setError(null);
+      setIsLoading(true);
+      try {
+        const data = await googleLogin(response.credential);
+        login(data.user, data.accessToken);
+        if (data.isNewUser && onNewUser) {
+          onNewUser();
+        } else {
+          router.push("/dashboard");
+        }
+      } catch (err: unknown) {
+        setError(getApiErrorMessage(err, "Failed to sign in with Google."));
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [login, router, onNewUser],
+  );
+
+  // Store latest callback in a ref so the SDK always calls the current version
+  const callbackRef = useRef(handleGoogleResponse);
+  useEffect(() => {
+    callbackRef.current = handleGoogleResponse;
+  }, [handleGoogleResponse]);
+
   useEffect(() => {
     const clientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId) return;
@@ -46,7 +75,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
     script.onload = () => {
       window.google?.accounts.id.initialize({
         client_id: clientId,
-        callback: handleGoogleResponse,
+        callback: (res: { credential: string }) => callbackRef.current(res),
       });
       if (buttonRef.current) {
         window.google?.accounts.id.renderButton(buttonRef.current, {
@@ -60,30 +89,10 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
     document.body.appendChild(script);
 
     return () => {
+      window.google?.accounts.id.cancel();
       script.remove();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function handleGoogleResponse(response: { credential: string }) {
-    setError(null);
-    setIsLoading(true);
-    try {
-      const { data } = await api.post("/auth/google", {
-        idToken: response.credential,
-      });
-      login(data.user, data.accessToken);
-      if (data.isNewUser && onNewUser) {
-        onNewUser();
-      } else {
-        router.push("/dashboard");
-      }
-    } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Failed to sign in with Google."));
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   const clientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   if (!clientId) return null;
@@ -106,11 +115,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
           Signing in with Google...
         </Button>
       )}
-      {error && (
-        <div className="text-sm text-destructive font-medium text-center">
-          {error}
-        </div>
-      )}
+      <FormError message={error} className="text-center" />
     </div>
   );
 }

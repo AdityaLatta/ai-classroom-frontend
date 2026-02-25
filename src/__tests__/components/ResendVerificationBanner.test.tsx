@@ -25,6 +25,7 @@ vi.mock("@/lib/api", () => ({
 describe("ResendVerificationBanner", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    sessionStorage.clear();
   });
 
   it("renders the verification warning text", () => {

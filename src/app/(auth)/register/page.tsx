@@ -20,13 +20,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { api } from "@/lib/api";
+import { registerUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { passwordSchema } from "@/lib/validations/auth";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FormError } from "@/components/ui/form-error";
 import { toast } from "sonner";
 import Link from "next/link";
 
@@ -55,7 +56,7 @@ export default function RegisterPage() {
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setError(null);
     try {
-      await api.post("/auth/register", values);
+      await registerUser(values);
       toast.success(
         "Registration successful! Please check your email to verify your account.",
       );
@@ -112,7 +113,12 @@ export default function RegisterPage() {
                 <FormItem className="text-left">
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -144,11 +150,7 @@ export default function RegisterPage() {
               )}
             />
 
-            {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
-            )}
+            <FormError message={error} />
 
             <Button
               type="submit"

@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useDeleteCourse } from "@/hooks/use-courses";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
+import { FormError } from "@/components/ui/form-error";
 import { useState } from "react";
 import type { Course } from "@/types";
 
@@ -54,9 +55,7 @@ export function DeleteCourseDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {error && (
-          <div className="text-sm text-destructive font-medium">{error}</div>
-        )}
+        <FormError message={error} />
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

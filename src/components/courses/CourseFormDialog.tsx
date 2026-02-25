@@ -26,6 +26,7 @@ import { createCourseSchema } from "@/lib/validations/course";
 import { useCreateCourse, useUpdateCourse } from "@/hooks/use-courses";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
+import { FormError } from "@/components/ui/form-error";
 import { useState, useEffect } from "react";
 import type { Course } from "@/types";
 
@@ -45,6 +46,7 @@ export function CourseFormDialog({
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
 
+  // Always validate full fields — edit form is pre-populated so all fields are present
   const form = useForm<z.infer<typeof createCourseSchema>>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: {
@@ -134,11 +136,7 @@ export function CourseFormDialog({
               )}
             />
 
-            {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
-            )}
+            <FormError message={error} />
 
             <DialogFooter>
               <Button

@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { api } from "@/lib/api";
+import { resetPassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { passwordSchema } from "@/lib/validations/auth";
 import { useSearchParams } from "next/navigation";
@@ -52,10 +52,7 @@ function ResetPasswordContent() {
 
   async function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
     try {
-      await api.post("/auth/reset-password", {
-        token,
-        password: values.password,
-      });
+      await resetPassword(token!, values.password);
       setStatus("success");
       toast.success("Password reset successfully!");
     } catch (err: unknown) {
@@ -124,7 +121,12 @@ function ResetPasswordContent() {
                 <FormItem className="text-left">
                   <FormLabel>New Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -137,7 +139,12 @@ function ResetPasswordContent() {
                 <FormItem className="text-left">
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
