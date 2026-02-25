@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { passwordSchema } from "@/lib/validations";
+import { passwordSchema } from "@/lib/validations/auth";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";

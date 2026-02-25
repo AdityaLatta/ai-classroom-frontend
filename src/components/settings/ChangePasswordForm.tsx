@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { changePasswordSchema } from "@/lib/validations";
+import { changePasswordSchema } from "@/lib/validations/auth";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { useAuthStore } from "@/store/auth.store";

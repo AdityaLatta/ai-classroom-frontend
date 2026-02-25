@@ -3,6 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState, ReactNode } from "react";
+import { logError } from "@/lib/logger";
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
@@ -15,6 +16,11 @@ export function Providers({ children }: { children: ReactNode }) {
             retry: 1,
             refetchOnWindowFocus: false,
           },
+          mutations: {
+            onError: (error) => {
+              logError(error, { source: "ReactQuery.mutation" });
+            },
+          },
         },
       }),
   );
@@ -22,7 +28,9 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === "development" && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
     </QueryClientProvider>
   );
 }

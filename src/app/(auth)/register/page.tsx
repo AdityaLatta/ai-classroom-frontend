@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { passwordSchema } from "@/lib/validations";
+import { passwordSchema } from "@/lib/validations/auth";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useAuthStore } from "@/store/auth.store";
 import { useRouter } from "next/navigation";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { env } from "@/env";
 
 declare global {
   interface Window {
@@ -35,7 +36,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
   const buttonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    const clientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId) return;
 
     const script = document.createElement("script");
@@ -84,7 +85,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
     }
   }
 
-  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+  const clientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
   if (!clientId) return null;
 
   return (

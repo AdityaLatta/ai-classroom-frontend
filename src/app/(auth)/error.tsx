@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
+import { logError } from "@/lib/logger";
 
 export default function AuthError({
   error,
@@ -10,6 +12,13 @@ export default function AuthError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    logError(error, {
+      source: "AuthErrorBoundary",
+      metadata: { digest: error.digest },
+    });
+  }, [error]);
+
   return (
     <div className="flex flex-col items-center space-y-4 text-center">
       <XCircle className="h-12 w-12 text-destructive" />

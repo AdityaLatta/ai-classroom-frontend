@@ -1,18 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { api, setAccessToken } from "@/lib/api";
+import type { User } from "@/types/auth";
 
-export type UserRole = "STUDENT" | "INSTRUCTOR" | "ADMIN";
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: UserRole;
-  emailVerified: boolean;
-  authProvider?: string;
-  createdAt?: string;
-}
+export type { User, UserRole } from "@/types/auth";
 
 interface AuthState {
   user: User | null;

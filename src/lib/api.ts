@@ -1,7 +1,5 @@
 import axios, { type InternalAxiosRequestConfig } from "axios";
-
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { env } from "@/env";
 
 // Access token: in-memory only (XSS-safe, lost on reload — restored via refresh)
 let accessToken: string | null = null;
@@ -15,7 +13,7 @@ export function getAccessToken(): string | null {
 }
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
     "X-Requested-With": "XMLHttpRequest",

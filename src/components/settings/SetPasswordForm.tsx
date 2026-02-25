@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { setPasswordSchema } from "@/lib/validations";
+import { setPasswordSchema } from "@/lib/validations/auth";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";

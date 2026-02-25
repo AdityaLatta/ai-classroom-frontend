@@ -59,9 +59,13 @@ export function CourseFormDialog({
         title: course?.title ?? "",
         description: course?.description ?? "",
       });
-      setError(null);
     }
   }, [open, course, form]);
+
+  function handleOpenChange(next: boolean) {
+    if (next) setError(null);
+    onOpenChange(next);
+  }
 
   async function onSubmit(values: z.infer<typeof createCourseSchema>) {
     setError(null);
@@ -85,7 +89,7 @@ export function CourseFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -140,7 +144,7 @@ export function CourseFormDialog({
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => onOpenChange(false)}
+                onClick={() => handleOpenChange(false)}
               >
                 Cancel
               </Button>

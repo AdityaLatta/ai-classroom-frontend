@@ -15,7 +15,7 @@ import {
 import { Gem, LogOut, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
@@ -30,16 +30,6 @@ export default function DashboardLayout({
   const { user, logout } = useAuthStore();
   const pathname = usePathname();
   const router = useRouter();
-
-  function getInitials(name?: string) {
-    if (!name) return "?";
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
-  }
 
   async function handleLogout() {
     await logout();
