@@ -10,6 +10,8 @@ export interface User {
   name: string;
   role: UserRole;
   emailVerified: boolean;
+  authProvider?: string;
+  createdAt?: string;
 }
 
 interface AuthState {

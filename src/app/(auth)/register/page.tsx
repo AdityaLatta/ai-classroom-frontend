@@ -23,6 +23,8 @@ import {
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { passwordSchema } from "@/lib/validations";
+import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
+import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -38,6 +40,7 @@ const registerSchema = z.object({
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -156,6 +159,14 @@ export default function RegisterPage() {
             </Button>
           </form>
         </Form>
+
+        <GoogleLoginButton onNewUser={() => setShowRoleDialog(true)} />
+
+        <RoleSelectionDialog
+          open={showRoleDialog}
+          onComplete={() => router.push("/dashboard")}
+        />
+
         <div className="text-sm text-center text-muted-foreground">
           Already have an account?{" "}
           <Link

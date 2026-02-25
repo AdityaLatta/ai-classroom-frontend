@@ -39,7 +39,7 @@ api.interceptors.request.use(
 // This unwraps so callers get the inner payload directly via response.data.
 api.interceptors.response.use(
   (response) => {
-    if (response.data && "data" in response.data) {
+    if (response.data && "data" in response.data && !("meta" in response.data)) {
       response.data = response.data.data;
     }
     return response;

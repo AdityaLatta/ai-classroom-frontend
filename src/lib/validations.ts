@@ -8,3 +8,24 @@ export const passwordSchema = z
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
     "Password must contain at least one lowercase letter, one uppercase letter, and one digit",
   );
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: passwordSchema,
+    confirmNewPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmNewPassword, {
+    message: "Passwords do not match",
+    path: ["confirmNewPassword"],
+  });
+
+export const setPasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

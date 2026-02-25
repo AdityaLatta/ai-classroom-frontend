@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/auth.store";
 import { api } from "@/lib/api";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
+import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
@@ -29,6 +31,7 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -110,6 +113,14 @@ export default function LoginPage() {
             </Button>
           </form>
         </Form>
+
+        <GoogleLoginButton onNewUser={() => setShowRoleDialog(true)} />
+
+        <RoleSelectionDialog
+          open={showRoleDialog}
+          onComplete={() => router.push("/dashboard")}
+        />
+
         <div className="text-sm text-center text-muted-foreground">
           Don&apos;t have an account?{" "}
           <Link
