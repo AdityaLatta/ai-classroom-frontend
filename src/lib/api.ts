@@ -35,14 +35,12 @@ api.interceptors.request.use(
 // Response interceptor: unwrap backend envelope
 // Backend returns { data: T } for ok/created, { message: string } for messages.
 // This unwraps so callers get the inner payload directly via response.data.
-api.interceptors.response.use(
-  (response) => {
-    if (response.data && "data" in response.data && !("meta" in response.data)) {
-      response.data = response.data.data;
-    }
-    return response;
-  },
-);
+api.interceptors.response.use((response) => {
+  if (response.data && "data" in response.data && !("meta" in response.data)) {
+    response.data = response.data.data;
+  }
+  return response;
+});
 
 // Response interceptor: refresh token on 401, then retry
 let isRefreshing = false;

@@ -37,7 +37,10 @@ const roles = [
   },
 ];
 
-export function RoleSelectionDialog({ open, onComplete }: RoleSelectionDialogProps) {
+export function RoleSelectionDialog({
+  open,
+  onComplete,
+}: RoleSelectionDialogProps) {
   const [selected, setSelected] = useState<Role | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,7 +58,9 @@ export function RoleSelectionDialog({ open, onComplete }: RoleSelectionDialogPro
       }
       onComplete(selected);
     } catch (err: unknown) {
-      setError(getApiErrorMessage(err, "Failed to set role. Please try again."));
+      setError(
+        getApiErrorMessage(err, "Failed to set role. Please try again."),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -63,7 +68,10 @@ export function RoleSelectionDialog({ open, onComplete }: RoleSelectionDialogPro
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent showCloseButton={false} onPointerDownOutside={(e) => e.preventDefault()}>
+      <DialogContent
+        showCloseButton={false}
+        onPointerDownOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Welcome! Choose your role</DialogTitle>
           <DialogDescription>

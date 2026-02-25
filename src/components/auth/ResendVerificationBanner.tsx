@@ -35,7 +35,10 @@ export function ResendVerificationBanner() {
   }, []);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950">
+    <div
+      role="alert"
+      className="flex items-center gap-3 rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900 dark:bg-yellow-950"
+    >
       <AlertCircle className="h-5 w-5 shrink-0 text-yellow-600 dark:text-yellow-500" />
       <div className="flex-1 text-sm text-yellow-800 dark:text-yellow-200">
         Your email is not verified. Please check your inbox for a verification

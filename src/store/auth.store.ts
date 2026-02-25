@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { api, setAccessToken } from "@/lib/api";
+import { setAccessToken } from "@/lib/api";
+import { logoutUser, fetchCurrentUser } from "@/lib/services/auth.service";
 import type { User } from "@/types/auth";
 
 export type { User, UserRole } from "@/types/auth";
@@ -29,8 +30,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
-          // Refresh token cookie is sent automatically
-          await api.post("/auth/logout", {});
+          await logoutUser();
         } catch {
           // Server-side cleanup failed — clear local state regardless
         } finally {
@@ -42,12 +42,9 @@ export const useAuthStore = create<AuthState>()(
       checkSession: async () => {
         set({ isLoading: true });
         try {
-          // On reload the in-memory access token is gone, so this 401s.
-          // The interceptor automatically refreshes using the httpOnly cookie,
-          // then retries this request with the new access token.
-          const { data } = await api.get("/auth/me");
+          const user = await fetchCurrentUser();
           set({
-            user: data,
+            user,
             isAuthenticated: true,
             isLoading: false,
           });

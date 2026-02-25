@@ -12,7 +12,7 @@ const studentUser: User = {
   emailVerified: true,
 };
 
-const instructorUser: User = {
+const _instructorUser: User = {
   id: "2",
   email: "instructor@example.com",
   name: "Instructor User",

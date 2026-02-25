@@ -13,18 +13,14 @@ function VerifyEmailContent() {
   const token = searchParams.get("token");
 
   const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading",
+    token ? "loading" : "error",
   );
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState(
+    token ? "" : "Verification token is missing. Please check your email link.",
+  );
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error");
-      setMessage(
-        "Verification token is missing. Please check your email link.",
-      );
-      return;
-    }
+    if (!token) return;
 
     const controller = new AbortController();
 
@@ -57,7 +53,10 @@ function VerifyEmailContent() {
   }, [token]);
 
   return (
-    <div className="flex flex-col items-center space-y-4 text-center">
+    <div
+      className="flex flex-col items-center space-y-4 text-center"
+      aria-live="polite"
+    >
       {status === "loading" && (
         <>
           <Loader2 className="h-12 w-12 animate-spin text-primary" />

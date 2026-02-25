@@ -1,13 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useCourses } from "@/hooks/use-courses";
 import { CourseCard } from "@/components/courses/CourseCard";
-import { CourseFormDialog } from "@/components/courses/CourseFormDialog";
 import { useAuthStore } from "@/store/auth.store";
 import { Loader2, Plus, Search } from "lucide-react";
+
+const CourseFormDialog = dynamic(
+  () =>
+    import("@/components/courses/CourseFormDialog").then(
+      (m) => m.CourseFormDialog,
+    ),
+  { ssr: false },
+);
 
 export default function CoursesPage() {
   const { user } = useAuthStore();

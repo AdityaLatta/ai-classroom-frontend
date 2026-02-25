@@ -1,6 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import type { Session } from "@/types";
+import {
+  fetchSessions,
+  revokeSession,
+  logoutAllSessions,
+} from "@/lib/services/session.service";
 
 export const sessionKeys = {
   all: ["sessions"] as const,
@@ -10,19 +13,14 @@ export const sessionKeys = {
 export function useSessions() {
   return useQuery({
     queryKey: sessionKeys.list(),
-    queryFn: async () => {
-      const { data } = await api.get<Session[]>("/auth/sessions");
-      return data;
-    },
+    queryFn: fetchSessions,
   });
 }
 
 export function useRevokeSession() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => {
-      await api.delete(`/auth/sessions/${id}`);
-    },
+    mutationFn: (id: string) => revokeSession(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sessionKeys.list() });
     },
@@ -32,9 +30,7 @@ export function useRevokeSession() {
 export function useLogoutAll() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
-      await api.post("/auth/logout-all", {});
-    },
+    mutationFn: logoutAllSessions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: sessionKeys.list() });
     },

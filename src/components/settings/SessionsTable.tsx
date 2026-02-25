@@ -50,9 +50,7 @@ export function SessionsTable() {
       await logout();
       router.push("/login");
     } catch (err: unknown) {
-      toast.error(
-        getApiErrorMessage(err, "Failed to logout all sessions."),
-      );
+      toast.error(getApiErrorMessage(err, "Failed to logout all sessions."));
     }
   }
 
@@ -124,9 +122,7 @@ export function SessionsTable() {
                 onClick={handleLogoutAll}
                 disabled={logoutAll.isPending}
               >
-                {logoutAll.isPending
-                  ? "Logging out..."
-                  : "Logout All Devices"}
+                {logoutAll.isPending ? "Logging out..." : "Logout All Devices"}
               </Button>
             </div>
           </>

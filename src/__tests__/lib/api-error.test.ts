@@ -2,7 +2,10 @@ import { describe, it, expect } from "vitest";
 import { AxiosError, type AxiosResponse } from "axios";
 import { getApiErrorMessage } from "@/lib/api-error";
 
-function makeAxiosError(data: Record<string, unknown> | null, status = 400): AxiosError {
+function makeAxiosError(
+  data: Record<string, unknown> | null,
+  status = 400,
+): AxiosError {
   const error = new AxiosError("Request failed");
   if (data !== null) {
     error.response = {

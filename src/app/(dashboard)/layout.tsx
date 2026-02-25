@@ -39,6 +39,12 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-4 focus:bg-background focus:text-foreground"
+        >
+          Skip to content
+        </a>
         {/* Top Navigation */}
         <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
           <div className="container flex h-16 items-center justify-between">
@@ -70,6 +76,7 @@ export default function DashboardLayout({
                 <Button
                   variant="ghost"
                   className="relative h-9 w-9 rounded-full"
+                  aria-label="User menu"
                 >
                   <Avatar>
                     <AvatarFallback>{getInitials(user?.name)}</AvatarFallback>
@@ -101,7 +108,9 @@ export default function DashboardLayout({
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 container py-8">{children}</main>
+        <main id="main-content" className="flex-1 container py-8">
+          {children}
+        </main>
       </div>
     </AuthGuard>
   );

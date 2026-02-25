@@ -11,7 +11,11 @@ interface RoleGuardProps {
   fallback?: ReactNode;
 }
 
-export function RoleGuard({ allowedRoles, children, fallback }: RoleGuardProps) {
+export function RoleGuard({
+  allowedRoles,
+  children,
+  fallback,
+}: RoleGuardProps) {
   const user = useAuthStore((s) => s.user);
 
   if (!user) return null;
