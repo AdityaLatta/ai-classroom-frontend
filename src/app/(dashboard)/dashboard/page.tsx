@@ -1,13 +1,12 @@
 "use client";
 
-import { useAuthStore } from "@/store/auth.store";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "@/components/ui/card";
+import { useAuthStore } from "@/store/auth.store";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
