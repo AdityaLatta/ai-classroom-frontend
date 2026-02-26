@@ -23,7 +23,7 @@ import {
 } from "@/hooks/use-sessions";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
-import { useAuthStore } from "@/store/auth.store";
+
 import { useRouter } from "next/navigation";
 import { formatDateTime } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
@@ -33,7 +33,6 @@ export function SessionsTable() {
   const { data: sessions, isLoading, error } = useSessions();
   const revokeSession = useRevokeSession();
   const logoutAll = useLogoutAll();
-  const { logout } = useAuthStore();
   const router = useRouter();
   const [revokingId, setRevokingId] = useState<string | null>(null);
 
@@ -53,7 +52,6 @@ export function SessionsTable() {
     try {
       await logoutAll.mutateAsync();
       toast.success("All sessions terminated");
-      await logout();
       router.push("/login");
     } catch (err: unknown) {
       toast.error(getApiErrorMessage(err, "Failed to logout all sessions."));

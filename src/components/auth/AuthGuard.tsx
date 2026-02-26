@@ -6,16 +6,15 @@ import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, checkSession } = useAuthStore();
+  const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only check if we haven't already and we are loading
     if (isLoading) {
-      checkSession();
+      useAuthStore.getState().checkSession();
     }
-  }, [isLoading, checkSession]);
+  }, [isLoading]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

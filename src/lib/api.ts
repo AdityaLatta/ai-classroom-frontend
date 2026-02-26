@@ -45,7 +45,7 @@ api.interceptors.response.use((response) => {
 // Response interceptor: refresh token on 401, then retry
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: () => void;
+  resolve: (value: unknown) => void;
   reject: (error: unknown) => void;
 }> = [];
 
@@ -54,7 +54,7 @@ function processQueue(error: unknown) {
     if (error) {
       reject(error);
     } else {
-      resolve();
+      resolve(undefined);
     }
   });
   failedQueue = [];

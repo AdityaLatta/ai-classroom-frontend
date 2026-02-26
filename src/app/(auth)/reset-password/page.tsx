@@ -51,8 +51,15 @@ function ResetPasswordContent() {
   });
 
   async function onSubmit(values: z.infer<typeof resetPasswordSchema>) {
+    if (!token) {
+      setStatus("error");
+      setErrorMessage(
+        "Reset token is missing. Please request a new password reset link.",
+      );
+      return;
+    }
     try {
-      await resetPassword(token!, values.password);
+      await resetPassword(token, values.password);
       setStatus("success");
       toast.success("Password reset successfully!");
     } catch (err: unknown) {

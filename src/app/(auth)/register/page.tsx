@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { registerUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { passwordSchema } from "@/lib/validations/auth";
+import { registerSchema } from "@/lib/validations/auth";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
 import { useRouter } from "next/navigation";
@@ -30,13 +30,6 @@ import { useState } from "react";
 import { FormError } from "@/components/ui/form-error";
 import { toast } from "sonner";
 import Link from "next/link";
-
-const registerSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  password: passwordSchema,
-  role: z.enum(["STUDENT", "INSTRUCTOR"]),
-});
 
 export default function RegisterPage() {
   const router = useRouter();

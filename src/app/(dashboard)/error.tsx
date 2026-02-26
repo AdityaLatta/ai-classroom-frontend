@@ -26,7 +26,7 @@ export default function DashboardError({
         Something went wrong
       </h1>
       <p className="text-sm text-muted-foreground max-w-md">
-        {error.message || "An unexpected error occurred. Please try again."}
+        An unexpected error occurred. Please try again.
       </p>
       <Button onClick={reset}>Try Again</Button>
     </div>

@@ -54,7 +54,10 @@ export default function CoursesPage() {
         <Input
           placeholder="Search courses..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            setPage(1);
+          }}
           className="pl-9"
           aria-label="Search courses"
         />
@@ -68,7 +71,7 @@ export default function CoursesPage() {
         <div className="text-center py-12 text-destructive">
           Failed to load courses. Please try again.
         </div>
-      ) : data?.data?.length === 0 ? (
+      ) : data?.data.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
           {debouncedSearch
             ? "No courses match your search."
@@ -77,7 +80,7 @@ export default function CoursesPage() {
       ) : (
         <>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data?.data?.map((course) => (
+            {data?.data.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}
           </div>

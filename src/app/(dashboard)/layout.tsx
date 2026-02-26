@@ -60,7 +60,9 @@ export default function DashboardLayout({
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        pathname.startsWith(link.href) &&
+                        (link.href === "/dashboard"
+                          ? pathname === "/dashboard"
+                          : pathname.startsWith(link.href)) &&
                           "bg-accent text-accent-foreground",
                       )}
                     >

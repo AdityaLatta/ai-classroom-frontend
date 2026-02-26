@@ -26,7 +26,7 @@ export default function AuthError({
         Something went wrong
       </h1>
       <p className="text-sm text-muted-foreground max-w-xs">
-        {error.message || "An unexpected error occurred. Please try again."}
+        An unexpected error occurred. Please try again.
       </p>
       <Button onClick={reset} className="mt-4">
         Try Again

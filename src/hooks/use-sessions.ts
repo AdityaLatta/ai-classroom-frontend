@@ -4,6 +4,7 @@ import {
   revokeSession,
   logoutAllSessions,
 } from "@/lib/services/session.service";
+import { useAuthStore } from "@/store/auth.store";
 
 export const sessionKeys = {
   all: ["sessions"] as const,
@@ -31,8 +32,9 @@ export function useLogoutAll() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: logoutAllSessions,
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.clear();
+      await useAuthStore.getState().logout();
     },
   });
 }

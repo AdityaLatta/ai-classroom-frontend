@@ -10,7 +10,7 @@ const isDev = process.env.NODE_ENV === "development";
 
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://accounts.google.com`,
+  `script-src 'self'${isDev ? " 'unsafe-inline' 'unsafe-eval'" : ""} https://accounts.google.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   `connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL ?? ""} https://*.sentry.io`,

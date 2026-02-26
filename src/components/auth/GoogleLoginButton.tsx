@@ -28,9 +28,13 @@ declare global {
 
 interface GoogleLoginButtonProps {
   onNewUser?: () => void;
+  redirectTo?: string;
 }
 
-export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
+export function GoogleLoginButton({
+  onNewUser,
+  redirectTo = "/dashboard",
+}: GoogleLoginButtonProps) {
   const { login } = useAuthStore();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -47,7 +51,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
         if (data.isNewUser && onNewUser) {
           onNewUser();
         } else {
-          router.push("/dashboard");
+          router.push(redirectTo);
         }
       } catch (err: unknown) {
         setError(getApiErrorMessage(err, "Failed to sign in with Google."));
@@ -55,7 +59,7 @@ export function GoogleLoginButton({ onNewUser }: GoogleLoginButtonProps) {
         setIsLoading(false);
       }
     },
-    [login, router, onNewUser],
+    [login, router, onNewUser, redirectTo],
   );
 
   // Store latest callback in a ref so the SDK always calls the current version

@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import type { Session } from "@/types";
 
-export async function fetchSessions() {
+export async function fetchSessions(): Promise<Session[]> {
   const { data } = await api.get<Session[]>("/auth/sessions");
   return data;
 }

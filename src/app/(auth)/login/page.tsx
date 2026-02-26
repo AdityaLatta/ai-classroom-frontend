@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,18 +19,21 @@ import { loginUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
 import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FormError } from "@/components/ui/form-error";
 import Link from "next/link";
+import { loginSchema } from "@/lib/validations/auth";
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, "Password is required"),
-});
+function getSafeRedirect(redirect: string | null): string {
+  if (redirect && redirect.startsWith("/")) return redirect;
+  return "/dashboard";
+}
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = getSafeRedirect(searchParams.get("redirect"));
   const { login } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
@@ -47,7 +51,7 @@ export default function LoginPage() {
     try {
       const data = await loginUser(values);
       login(data.user, data.accessToken);
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err: unknown) {
       setError(getApiErrorMessage(err, "Failed to login. Please try again."));
     }
@@ -116,11 +120,14 @@ export default function LoginPage() {
           </form>
         </Form>
 
-        <GoogleLoginButton onNewUser={() => setShowRoleDialog(true)} />
+        <GoogleLoginButton
+          onNewUser={() => setShowRoleDialog(true)}
+          redirectTo={redirectTo}
+        />
 
         <RoleSelectionDialog
           open={showRoleDialog}
-          onComplete={() => router.push("/dashboard")}
+          onComplete={() => router.push(redirectTo)}
         />
 
         <div className="text-sm text-center text-muted-foreground">
@@ -134,5 +141,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }

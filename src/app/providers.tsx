@@ -56,11 +56,9 @@ export function Providers({ children }: { children: ReactNode }) {
             retry: 1,
             refetchOnWindowFocus: false,
           },
-          mutations: {
-            onError: (error) => {
-              logError(error, { source: "ReactQuery.mutation" });
-            },
-          },
+          // Note: No global mutation onError handler. All mutations handle
+          // errors explicitly in their component-level catch blocks to avoid
+          // duplicate Sentry events.
         },
       }),
   );
