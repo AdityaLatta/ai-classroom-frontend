@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { Suspense, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ const CourseFormDialog = dynamic(
   { ssr: false },
 );
 
-export default function CoursesPage() {
+function CoursesContent() {
   const { user } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -133,5 +133,13 @@ export default function CoursesPage() {
         onOpenChange={(open) => updateParams({ create: open ? "true" : null })}
       />
     </div>
+  );
+}
+
+export default function CoursesPage() {
+  return (
+    <Suspense>
+      <CoursesContent />
+    </Suspense>
   );
 }

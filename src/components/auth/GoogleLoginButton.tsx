@@ -113,6 +113,7 @@ export function GoogleLoginButton({
         existing.addEventListener("load", initializeGoogle);
       }
       return () => {
+        existing.removeEventListener("load", initializeGoogle);
         window.google?.accounts.id.cancel();
       };
     }

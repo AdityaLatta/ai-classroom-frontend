@@ -2,7 +2,7 @@ import { api } from "@/lib/api";
 import type {
   Course,
   CreateCourseDTO,
-  UpdateCourseDTO,
+  UpdateCourseInput,
   ListCoursesParams,
   PaginatedResponse,
 } from "@/types";
@@ -29,7 +29,7 @@ export async function createCourse(dto: CreateCourseDTO): Promise<Course> {
 export async function updateCourse({
   id,
   ...dto
-}: UpdateCourseDTO & { id: string }): Promise<Course> {
+}: UpdateCourseInput): Promise<Course> {
   const { data } = await api.put<Course>(`/courses/${id}`, dto);
   return data;
 }
