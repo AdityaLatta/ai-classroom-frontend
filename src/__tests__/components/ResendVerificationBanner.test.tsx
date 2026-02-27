@@ -6,6 +6,7 @@ import {
   waitFor,
 } from "@/test/test-utils";
 import { ResendVerificationBanner } from "@/components/auth/ResendVerificationBanner";
+import { useAuthStore } from "@/store/auth.store";
 import { toast } from "sonner";
 
 vi.mock("@/lib/api", () => ({
@@ -26,6 +27,17 @@ describe("ResendVerificationBanner", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
+    useAuthStore.setState({
+      user: {
+        id: "1",
+        email: "test@example.com",
+        name: "Test User",
+        role: "STUDENT",
+        emailVerified: false,
+      },
+      isAuthenticated: true,
+      isLoading: false,
+    });
   });
 
   it("renders the verification warning text", () => {
@@ -50,7 +62,9 @@ describe("ResendVerificationBanner", () => {
 
     await user.click(screen.getByRole("button", { name: "Resend" }));
 
-    expect(api.post).toHaveBeenCalledWith("/auth/resend-verification", {});
+    expect(api.post).toHaveBeenCalledWith("/auth/resend-verification", {
+      email: "test@example.com",
+    });
   });
 
   it("shows success toast on successful resend", async () => {

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { resendVerification } from "@/lib/services/auth.service";
+import { useAuthStore } from "@/store/auth.store";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { toast } from "sonner";
 import { AlertCircle } from "lucide-react";
@@ -18,6 +19,7 @@ function getRemainingCooldown(): number {
 }
 
 export function ResendVerificationBanner() {
+  const email = useAuthStore((s) => s.user?.email);
   const [cooldown, setCooldown] = useState(() => getRemainingCooldown());
   const [isSending, setIsSending] = useState(false);
 
@@ -30,9 +32,10 @@ export function ResendVerificationBanner() {
   }, [cooldown]);
 
   const handleResend = useCallback(async () => {
+    if (!email) return;
     setIsSending(true);
     try {
-      await resendVerification();
+      await resendVerification(email);
       toast.success("Verification email sent! Check your inbox.");
       sessionStorage.setItem(COOLDOWN_KEY, String(Date.now()));
       setCooldown(COOLDOWN_SECONDS);
@@ -43,7 +46,7 @@ export function ResendVerificationBanner() {
     } finally {
       setIsSending(false);
     }
-  }, []);
+  }, [email]);
 
   return (
     <div

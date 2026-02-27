@@ -45,8 +45,8 @@ export async function googleLogin(
   return data;
 }
 
-export async function resendVerification(): Promise<void> {
-  await api.post("/auth/resend-verification", {});
+export async function resendVerification(email: string): Promise<void> {
+  await api.post("/auth/resend-verification", { email });
 }
 
 export async function selectRole(role: UserRole): Promise<{ role: UserRole }> {
