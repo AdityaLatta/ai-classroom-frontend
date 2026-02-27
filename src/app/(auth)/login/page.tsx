@@ -15,14 +15,25 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/auth.store";
-import { loginUser } from "@/lib/services/auth.service";
-import { getApiErrorMessage } from "@/lib/api-error";
+import { loginUser, resendVerification } from "@/lib/services/auth.service";
+import { getApiErrorMessage, getApiErrorCode } from "@/lib/api-error";
+import { toast } from "sonner";
 import { GoogleAuthSection } from "@/components/auth/GoogleAuthSection";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FormError } from "@/components/ui/form-error";
 import Link from "next/link";
 import { loginSchema } from "@/lib/validations/auth";
+
+const COOLDOWN_KEY = "resend-verification-ts";
+const COOLDOWN_SECONDS = 60;
+
+function getRemainingCooldown(): number {
+  const stored = sessionStorage.getItem(COOLDOWN_KEY);
+  if (!stored) return 0;
+  const elapsed = Math.floor((Date.now() - Number(stored)) / 1000);
+  return Math.max(0, COOLDOWN_SECONDS - elapsed);
+}
 
 function getSafeRedirect(redirect: string | null): string {
   if (redirect && redirect.startsWith("/")) return redirect;
@@ -35,6 +46,34 @@ function LoginContent() {
   const redirectTo = getSafeRedirect(searchParams.get("redirect"));
   const { login } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
+  const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+  const [isSending, setIsSending] = useState(false);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const handleResend = useCallback(async () => {
+    if (!unverifiedEmail) return;
+    setIsSending(true);
+    try {
+      await resendVerification(unverifiedEmail);
+      toast.success("Verification email sent! Check your inbox.");
+      sessionStorage.setItem(COOLDOWN_KEY, String(Date.now()));
+      setCooldown(COOLDOWN_SECONDS);
+    } catch (err: unknown) {
+      toast.error(
+        getApiErrorMessage(err, "Failed to resend verification email."),
+      );
+    } finally {
+      setIsSending(false);
+    }
+  }, [unverifiedEmail]);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -46,11 +85,16 @@ function LoginContent() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     setError(null);
+    setUnverifiedEmail(null);
     try {
       const data = await loginUser(values);
       login(data.user, data.accessToken);
       router.push(redirectTo);
     } catch (err: unknown) {
+      if (getApiErrorCode(err) === "AUTH_EMAIL_NOT_VERIFIED") {
+        setUnverifiedEmail(values.email);
+        setCooldown(getRemainingCooldown());
+      }
       setError(getApiErrorMessage(err, "Failed to login. Please try again."));
     }
   }
@@ -107,6 +151,28 @@ function LoginContent() {
             </div>
 
             <FormError message={error} />
+
+            {unverifiedEmail && (
+              <div className="flex items-center justify-between rounded-md border border-muted bg-muted/50 px-3 py-2 text-sm">
+                <span className="text-muted-foreground">
+                  Didn&apos;t receive it?
+                </span>
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  className="h-auto p-0"
+                  onClick={handleResend}
+                  disabled={isSending || cooldown > 0}
+                >
+                  {cooldown > 0
+                    ? `Resend in ${cooldown}s`
+                    : isSending
+                      ? "Sending..."
+                      : "Resend verification email"}
+                </Button>
+              </div>
+            )}
 
             <Button
               type="submit"

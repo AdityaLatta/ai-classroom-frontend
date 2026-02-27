@@ -2,15 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/store/auth.store";
-import { ResendVerificationBanner } from "@/components/auth/ResendVerificationBanner";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
 
   return (
     <div className="space-y-6">
-      {!user?.emailVerified && <ResendVerificationBanner />}
-
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
