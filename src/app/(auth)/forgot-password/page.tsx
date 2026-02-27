@@ -15,14 +15,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { forgotPassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
+import { forgotPasswordSchema } from "@/lib/validations/auth";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
-});
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);

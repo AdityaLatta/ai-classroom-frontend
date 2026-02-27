@@ -57,13 +57,14 @@ describe("GoogleLoginButton", () => {
     expect(script?.defer).toBe(true);
   });
 
-  it("removes the Google GSI script on unmount", () => {
+  it("keeps the Google GSI script on unmount for reuse", () => {
     const { unmount } = renderWithProviders(<GoogleLoginButton />);
     unmount();
+    // Script is intentionally kept in DOM so re-mounts reuse it
     const script = document.querySelector(
       'script[src="https://accounts.google.com/gsi/client"]',
     );
-    expect(script).toBeNull();
+    expect(script).not.toBeNull();
   });
 
   it("calls googleLogin when Google SDK callback fires", async () => {

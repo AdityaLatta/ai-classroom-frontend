@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useCourse } from "@/hooks/use-courses";
 import { useAuthStore } from "@/store/auth.store";
 import { ArrowLeft, Edit, Loader2, Trash2 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, hasRole } from "@/lib/utils";
 import Link from "next/link";
 
 const CourseFormDialog = dynamic(
@@ -38,7 +38,7 @@ export default function CourseDetailPage({
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
-  const canModify = user?.id === course?.instructorId || user?.role === "ADMIN";
+  const canModify = user?.id === course?.instructorId || hasRole(user, "ADMIN");
 
   if (isLoading) {
     return (

@@ -23,8 +23,7 @@ import {
 import { registerUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { registerSchema } from "@/lib/validations/auth";
-import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
-import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
+import { GoogleAuthSection } from "@/components/auth/GoogleAuthSection";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FormError } from "@/components/ui/form-error";
@@ -34,7 +33,6 @@ import Link from "next/link";
 export default function RegisterPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [showRoleDialog, setShowRoleDialog] = useState(false);
 
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
@@ -155,12 +153,7 @@ export default function RegisterPage() {
           </form>
         </Form>
 
-        <GoogleLoginButton onNewUser={() => setShowRoleDialog(true)} />
-
-        <RoleSelectionDialog
-          open={showRoleDialog}
-          onComplete={() => router.push("/dashboard")}
-        />
+        <GoogleAuthSection />
 
         <div className="text-sm text-center text-muted-foreground">
           Already have an account?{" "}

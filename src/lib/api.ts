@@ -33,8 +33,12 @@ api.interceptors.request.use(
 );
 
 // Response interceptor: unwrap backend envelope
-// Backend returns { data: T } for ok/created, { message: string } for messages.
-// This unwraps so callers get the inner payload directly via response.data.
+// Backend wraps all success responses in { data: T }.
+// Paginated endpoints return { data: T[], meta: PaginationMeta } — these are
+// NOT unwrapped so callers receive both `data` and `meta`.
+// All other envelope responses are unwrapped so callers get T directly via
+// response.data. If a future endpoint returns { data: ... } without meta and
+// should NOT be unwrapped, opt it out with a custom Axios config flag.
 api.interceptors.response.use((response) => {
   if (response.data && "data" in response.data && !("meta" in response.data)) {
     response.data = response.data.data;

@@ -15,6 +15,7 @@ export function useSessions() {
   return useQuery({
     queryKey: sessionKeys.list(),
     queryFn: fetchSessions,
+    staleTime: 0, // Security-sensitive — always refetch
   });
 }
 

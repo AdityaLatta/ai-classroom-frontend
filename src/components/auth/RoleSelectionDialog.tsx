@@ -15,23 +15,24 @@ import { useAuthStore } from "@/store/auth.store";
 import { getApiErrorMessage } from "@/lib/api-error";
 import { FormError } from "@/components/ui/form-error";
 import { cn } from "@/lib/utils";
+import type { UserRole } from "@/types/auth";
 
-type Role = "STUDENT" | "INSTRUCTOR";
+type SelectableRole = Exclude<UserRole, "ADMIN">;
 
 interface RoleSelectionDialogProps {
   open: boolean;
-  onComplete: (role: Role) => void;
+  onComplete: (role: SelectableRole) => void;
 }
 
 const roles = [
   {
-    value: "STUDENT" as Role,
+    value: "STUDENT" as SelectableRole,
     label: "Student",
     description: "Browse and enroll in courses to learn new skills",
     icon: GraduationCap,
   },
   {
-    value: "INSTRUCTOR" as Role,
+    value: "INSTRUCTOR" as SelectableRole,
     label: "Instructor",
     description: "Create and publish courses to teach others",
     icon: BookOpen,
@@ -42,7 +43,7 @@ export function RoleSelectionDialog({
   open,
   onComplete,
 }: RoleSelectionDialogProps) {
-  const [selected, setSelected] = useState<Role | null>(null);
+  const [selected, setSelected] = useState<SelectableRole | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const user = useAuthStore((s) => s.user);

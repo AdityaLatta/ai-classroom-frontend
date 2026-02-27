@@ -5,7 +5,7 @@ import {
   type RenderHookOptions,
 } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type ReactElement, type ReactNode } from "react";
+import { type ReactElement, type ReactNode, useState } from "react";
 
 function createTestQueryClient() {
   return new QueryClient({
@@ -17,7 +17,7 @@ function createTestQueryClient() {
 }
 
 function AllProviders({ children }: { children: ReactNode }) {
-  const queryClient = createTestQueryClient();
+  const [queryClient] = useState(() => createTestQueryClient());
   return (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );

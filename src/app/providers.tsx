@@ -2,10 +2,12 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Component, useState, ReactNode } from "react";
+import { Component, useEffect, useRef, useState, ReactNode } from "react";
 import { logError } from "@/lib/logger";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/auth.store";
+import { useRouter } from "next/navigation";
 
 class ErrorBoundary extends Component<
   { children: ReactNode },
@@ -45,6 +47,33 @@ class ErrorBoundary extends Component<
   }
 }
 
+/**
+ * Initializes auth session exactly once on app mount, and listens for global
+ * "unauthorized" events (fired by api.ts when token refresh fails).
+ */
+function SessionInitializer() {
+  const hasChecked = useRef(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!hasChecked.current) {
+      hasChecked.current = true;
+      useAuthStore.getState().checkSession();
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      useAuthStore.getState().logout();
+      router.push("/login?session_expired=true");
+    };
+    window.addEventListener("unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("unauthorized", handleUnauthorized);
+  }, [router]);
+
+  return null;
+}
+
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(
     () =>
@@ -65,6 +94,7 @@ export function Providers({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SessionInitializer />
       <ErrorBoundary>{children}</ErrorBoundary>
       {process.env.NODE_ENV === "development" && (
         <ReactQueryDevtools initialIsOpen={false} />

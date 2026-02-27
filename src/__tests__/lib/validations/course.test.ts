@@ -69,9 +69,9 @@ describe("updateCourseSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("accepts empty object", () => {
+  it("rejects empty object — at least one field required", () => {
     const result = updateCourseSchema.safeParse({});
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
   it("still validates field constraints", () => {

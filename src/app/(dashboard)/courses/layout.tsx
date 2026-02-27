@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Courses | AI Classroom",
+  title: "Courses",
 };
 
 export default function CoursesLayout({

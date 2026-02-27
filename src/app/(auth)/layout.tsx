@@ -10,12 +10,13 @@ export const metadata: Metadata = {
   description: "Sign in or create an account for AI Classroom",
 };
 
+const QUOTE =
+  "Discover the future of interactive learning powered by Artificial Intelligence.";
+
 export default function AuthLayout({
   children,
-  quote = "Discover the future of interactive learning powered by Artificial Intelligence.",
 }: {
   children: React.ReactNode;
-  quote?: string;
 }) {
   return (
     <div className="container relative flex h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
@@ -28,7 +29,7 @@ export default function AuthLayout({
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
-            <p className="text-lg">&ldquo;{quote}&rdquo;</p>
+            <p className="text-lg">&ldquo;{QUOTE}&rdquo;</p>
           </blockquote>
         </div>
       </div>

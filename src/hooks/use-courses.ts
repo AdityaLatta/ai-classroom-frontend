@@ -13,7 +13,7 @@ import {
 } from "@/lib/services/course.service";
 import type {
   CreateCourseDTO,
-  UpdateCourseDTO,
+  UpdateCourseInput,
   ListCoursesParams,
 } from "@/types";
 
@@ -54,8 +54,7 @@ export function useCreateCourse() {
 export function useUpdateCourse() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (variables: UpdateCourseDTO & { id: string }) =>
-      updateCourse(variables),
+    mutationFn: (variables: UpdateCourseInput) => updateCourse(variables),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: courseKeys.lists() });
       queryClient.invalidateQueries({

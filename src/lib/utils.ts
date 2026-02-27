@@ -1,5 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { UserRole } from "@/types/auth";
+import type { User } from "@/types/auth";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -35,4 +37,8 @@ export function getInitials(name?: string): string {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+}
+
+export function hasRole(user: User | null, ...roles: UserRole[]): boolean {
+  return !!user?.role && roles.includes(user.role);
 }

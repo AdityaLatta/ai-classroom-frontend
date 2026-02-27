@@ -17,8 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/auth.store";
 import { loginUser } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { GoogleLoginButton } from "@/components/auth/GoogleLoginButton";
-import { RoleSelectionDialog } from "@/components/auth/RoleSelectionDialog";
+import { GoogleAuthSection } from "@/components/auth/GoogleAuthSection";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FormError } from "@/components/ui/form-error";
@@ -36,7 +35,6 @@ function LoginContent() {
   const redirectTo = getSafeRedirect(searchParams.get("redirect"));
   const { login } = useAuthStore();
   const [error, setError] = useState<string | null>(null);
-  const [showRoleDialog, setShowRoleDialog] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -120,15 +118,7 @@ function LoginContent() {
           </form>
         </Form>
 
-        <GoogleLoginButton
-          onNewUser={() => setShowRoleDialog(true)}
-          redirectTo={redirectTo}
-        />
-
-        <RoleSelectionDialog
-          open={showRoleDialog}
-          onComplete={() => router.push(redirectTo)}
-        />
+        <GoogleAuthSection redirectTo={redirectTo} />
 
         <div className="text-sm text-center text-muted-foreground">
           Don&apos;t have an account?{" "}

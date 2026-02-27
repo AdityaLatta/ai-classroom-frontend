@@ -106,7 +106,7 @@ export function SessionsTable() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {sessions?.length === 0 && (
+                {(sessions?.length ?? 0) === 0 && (
                   <TableRow>
                     <TableCell
                       colSpan={4}

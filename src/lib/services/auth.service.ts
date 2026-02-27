@@ -14,7 +14,7 @@ export async function registerUser(data: {
   name: string;
   email: string;
   password: string;
-  role: string;
+  role: UserRole;
 }): Promise<void> {
   await api.post("/auth/register", data);
 }

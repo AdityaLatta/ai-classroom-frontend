@@ -22,6 +22,10 @@ export interface UpdateCourseDTO {
   description?: string;
 }
 
+export interface UpdateCourseInput extends UpdateCourseDTO {
+  id: string;
+}
+
 export interface ListCoursesParams {
   page?: number;
   limit?: number;

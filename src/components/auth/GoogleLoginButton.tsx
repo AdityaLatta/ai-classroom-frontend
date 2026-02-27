@@ -9,15 +9,30 @@ import { getApiErrorMessage } from "@/lib/api-error";
 import { FormError } from "@/components/ui/form-error";
 import { env } from "@/env";
 
+interface GoogleIdConfig {
+  client_id: string;
+  callback: (response: { credential: string }) => void;
+  auto_select?: boolean;
+  cancel_on_tap_outside?: boolean;
+}
+
+interface GoogleButtonConfig {
+  theme?: "outline" | "filled_blue" | "filled_black";
+  size?: "large" | "medium" | "small";
+  width?: string;
+  text?: "signin_with" | "signup_with" | "continue_with" | "signin";
+  shape?: "rectangular" | "pill" | "circle" | "square";
+}
+
 declare global {
   interface Window {
     google?: {
       accounts: {
         id: {
-          initialize: (config: Record<string, unknown>) => void;
+          initialize: (config: GoogleIdConfig) => void;
           renderButton: (
             element: HTMLElement,
-            config: Record<string, unknown>,
+            config: GoogleButtonConfig,
           ) => void;
           cancel: () => void;
         };
@@ -72,14 +87,10 @@ export function GoogleLoginButton({
     const clientId = env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!clientId) return;
 
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
+    function initializeGoogle() {
       window.google?.accounts.id.initialize({
         client_id: clientId,
-        callback: (res: { credential: string }) => callbackRef.current(res),
+        callback: (res) => callbackRef.current(res),
       });
       if (buttonRef.current) {
         window.google?.accounts.id.renderButton(buttonRef.current, {
@@ -89,12 +100,32 @@ export function GoogleLoginButton({
           text: "continue_with",
         });
       }
-    };
+    }
+
+    // Reuse existing script if already loaded (e.g. navigating back to this page)
+    const existing = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]',
+    );
+    if (existing) {
+      if (window.google) {
+        initializeGoogle();
+      } else {
+        existing.addEventListener("load", initializeGoogle);
+      }
+      return () => {
+        window.google?.accounts.id.cancel();
+      };
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.onload = initializeGoogle;
     document.body.appendChild(script);
 
     return () => {
       window.google?.accounts.id.cancel();
-      script.remove();
     };
   }, []);
 

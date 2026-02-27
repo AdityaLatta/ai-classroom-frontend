@@ -16,21 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { resetPassword } from "@/lib/services/auth.service";
 import { getApiErrorMessage } from "@/lib/api-error";
-import { passwordSchema } from "@/lib/validations/auth";
+import { resetPasswordSchema } from "@/lib/validations/auth";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
-
-const resetPasswordSchema = z
-  .object({
-    password: passwordSchema,
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
 
 function ResetPasswordContent() {
   const searchParams = useSearchParams();

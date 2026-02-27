@@ -11,4 +11,8 @@ export const createCourseSchema = z.object({
     .max(5000, "Description must be at most 5000 characters"),
 });
 
-export const updateCourseSchema = createCourseSchema.partial();
+export const updateCourseSchema = createCourseSchema
+  .partial()
+  .refine((data) => Object.values(data).some((v) => v !== undefined), {
+    message: "At least one field must be provided",
+  });

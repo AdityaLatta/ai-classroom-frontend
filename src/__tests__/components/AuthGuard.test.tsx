@@ -69,10 +69,10 @@ describe("AuthGuard", () => {
     });
   });
 
-  it("listens for unauthorized event and redirects", async () => {
+  it("does not render children when not authenticated", () => {
     useAuthStore.setState({
-      user: mockUser,
-      isAuthenticated: true,
+      user: null,
+      isAuthenticated: false,
       isLoading: false,
     });
 
@@ -82,10 +82,6 @@ describe("AuthGuard", () => {
       </AuthGuard>,
     );
 
-    window.dispatchEvent(new Event("unauthorized"));
-
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/login?session_expired=true");
-    });
+    expect(screen.queryByText("Protected")).not.toBeInTheDocument();
   });
 });
