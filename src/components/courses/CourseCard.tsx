@@ -11,9 +11,22 @@ interface CourseCardProps {
   course: Course;
 }
 
+const statusVariant: Record<string, "default" | "secondary" | "outline"> = {
+  PUBLISHED: "default",
+  DRAFT: "secondary",
+  ARCHIVED: "outline",
+};
+
+const difficultyLabel: Record<string, string> = {
+  BEGINNER: "Beginner",
+  INTERMEDIATE: "Intermediate",
+  ADVANCED: "Advanced",
+};
+
 export function CourseCard({ course }: CourseCardProps) {
   const { user } = useAuthStore();
   const isOwner = user?.id === course.instructorId;
+  const showStatus = isOwner || user?.role === "ADMIN";
 
   return (
     <Link href={`/courses/${course.id}`}>
@@ -23,7 +36,26 @@ export function CourseCard({ course }: CourseCardProps) {
             <CardTitle className="line-clamp-2 text-base">
               {course.title}
             </CardTitle>
-            {isOwner && <Badge variant="secondary">My Course</Badge>}
+            <div className="flex gap-1 shrink-0">
+              {isOwner && <Badge variant="secondary">My Course</Badge>}
+              {showStatus && course.status !== "PUBLISHED" && (
+                <Badge variant={statusVariant[course.status] ?? "outline"}>
+                  {course.status}
+                </Badge>
+              )}
+            </div>
+          </div>
+          <div className="flex gap-1 flex-wrap">
+            {course.difficulty && (
+              <Badge variant="outline" className="text-xs font-normal">
+                {difficultyLabel[course.difficulty] ?? course.difficulty}
+              </Badge>
+            )}
+            {course.category && (
+              <Badge variant="outline" className="text-xs font-normal">
+                {course.category}
+              </Badge>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-2">

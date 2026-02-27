@@ -27,6 +27,10 @@ const mockCourse: Course = {
   title: "Existing Course",
   description: "An existing course description that is long enough.",
   instructorId: "u1",
+  status: "DRAFT",
+  thumbnailUrl: null,
+  category: null,
+  difficulty: null,
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 };

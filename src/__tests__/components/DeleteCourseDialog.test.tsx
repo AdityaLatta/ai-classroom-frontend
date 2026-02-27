@@ -23,6 +23,10 @@ const mockCourse: Course = {
   title: "Course to Delete",
   description: "This course will be deleted.",
   instructorId: "u1",
+  status: "DRAFT",
+  thumbnailUrl: null,
+  category: null,
+  difficulty: null,
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 };

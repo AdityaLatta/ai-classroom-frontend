@@ -23,7 +23,7 @@ import {
 import { Gem, LogOut, Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { cn, getInitials } from "@/lib/utils";
+import { cn, getInitials, hasRole } from "@/lib/utils";
 
 interface NavLink {
   href: string;
@@ -31,9 +31,14 @@ interface NavLink {
   exact?: boolean;
 }
 
-const navLinks: NavLink[] = [
+const baseNavLinks: NavLink[] = [
   { href: "/dashboard", label: "Dashboard", exact: true },
   { href: "/courses", label: "Courses" },
+];
+
+const studentNavLinks: NavLink[] = [
+  ...baseNavLinks,
+  { href: "/my-courses", label: "My Courses" },
 ];
 
 function isNavActive(link: NavLink, pathname: string): boolean {
@@ -45,6 +50,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = hasRole(user, "STUDENT") ? studentNavLinks : baseNavLinks;
 
   async function handleLogout() {
     await logout();
@@ -62,7 +69,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </a>
 
         <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-          <div className="container flex h-16 items-center justify-between">
+          <div className="w-full px-4 md:px-6 lg:px-8 flex h-16 items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="flex gap-2 items-center font-bold text-lg">
                 <Gem className="h-5 w-5 text-primary" />
@@ -168,7 +175,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main id="main-content" className="flex-1 container py-8">
+        <main
+          id="main-content"
+          className="flex-1 w-full px-4 md:px-6 lg:px-8 py-8"
+        >
           {children}
         </main>
       </div>

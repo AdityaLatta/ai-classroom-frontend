@@ -19,6 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -46,12 +53,15 @@ export function CourseFormDialog({
   const createCourse = useCreateCourse();
   const updateCourse = useUpdateCourse();
 
-  // Always validate full fields — edit form is pre-populated so all fields are present
   const form = useForm<z.infer<typeof createCourseSchema>>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: {
       title: course?.title ?? "",
       description: course?.description ?? "",
+      status: course?.status ?? "DRAFT",
+      category: course?.category ?? "",
+      difficulty: course?.difficulty ?? undefined,
+      thumbnailUrl: course?.thumbnailUrl ?? "",
     },
   });
 
@@ -60,6 +70,10 @@ export function CourseFormDialog({
       form.reset({
         title: course?.title ?? "",
         description: course?.description ?? "",
+        status: course?.status ?? "DRAFT",
+        category: course?.category ?? "",
+        difficulty: course?.difficulty ?? undefined,
+        thumbnailUrl: course?.thumbnailUrl ?? "",
       });
     }
   }, [open, course, form]);
@@ -71,12 +85,18 @@ export function CourseFormDialog({
 
   async function onSubmit(values: z.infer<typeof createCourseSchema>) {
     setError(null);
+    // Clean up empty strings
+    const cleaned = {
+      ...values,
+      category: values.category || undefined,
+      thumbnailUrl: values.thumbnailUrl || undefined,
+    };
     try {
       if (isEditing) {
-        await updateCourse.mutateAsync({ id: course.id, ...values });
+        await updateCourse.mutateAsync({ id: course.id, ...cleaned });
         toast.success("Course updated successfully");
       } else {
-        await createCourse.mutateAsync(values);
+        await createCourse.mutateAsync(cleaned);
         toast.success("Course created successfully");
       }
       onOpenChange(false);
@@ -92,7 +112,7 @@ export function CourseFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent>
+      <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Edit Course" : "Create Course"}
@@ -127,7 +147,93 @@ export function CourseFormDialog({
                   <FormControl>
                     <Textarea
                       placeholder="Course description"
-                      rows={4}
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="DRAFT">Draft</SelectItem>
+                        <SelectItem value="PUBLISHED">Published</SelectItem>
+                        <SelectItem value="ARCHIVED">Archived</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="difficulty"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Difficulty</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      value={field.value ?? ""}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select level" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="BEGINNER">Beginner</SelectItem>
+                        <SelectItem value="INTERMEDIATE">
+                          Intermediate
+                        </SelectItem>
+                        <SelectItem value="ADVANCED">Advanced</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Mathematics, Programming"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="thumbnailUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Thumbnail URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://example.com/image.jpg"
                       {...field}
                     />
                   </FormControl>

@@ -11,6 +11,10 @@ const mockCourse: Course = {
   description: "A comprehensive course on TypeScript fundamentals.",
   instructorId: "u1",
   instructor: { id: "u1", name: "Jane Smith", email: "jane@test.com" },
+  status: "PUBLISHED",
+  thumbnailUrl: null,
+  category: null,
+  difficulty: null,
   createdAt: "2024-06-15T00:00:00Z",
   updatedAt: "2024-06-15T00:00:00Z",
 };

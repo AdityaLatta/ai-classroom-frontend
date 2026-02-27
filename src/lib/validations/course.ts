@@ -9,6 +9,10 @@ export const createCourseSchema = z.object({
     .string()
     .min(10, "Description must be at least 10 characters")
     .max(5000, "Description must be at most 5000 characters"),
+  status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).optional(),
+  category: z.string().max(100).optional().or(z.literal("")),
+  difficulty: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]).optional(),
+  thumbnailUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
 });
 
 export const updateCourseSchema = createCourseSchema
