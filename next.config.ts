@@ -14,7 +14,7 @@ const apiOrigin = process.env.NEXT_PUBLIC_API_URL
 
 const cspDirectives = [
   "default-src 'self'",
-  `script-src 'self'${isDev ? " 'unsafe-inline' 'unsafe-eval'" : ""} https://accounts.google.com`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://accounts.google.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   `connect-src 'self' ${apiOrigin} https://*.sentry.io`,
@@ -39,7 +39,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   async headers() {
     return [
       {
