@@ -8,7 +8,9 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const isDev = process.env.NODE_ENV === "development";
 
-const apiOrigin = process.env.NEXT_PUBLIC_API_URL
+// In production, API requests are proxied via Next.js rewrites (same-origin),
+// so connect-src only needs 'self'. In dev, allow the direct backend origin.
+const apiOrigin = isDev && process.env.NEXT_PUBLIC_API_URL
   ? new URL(process.env.NEXT_PUBLIC_API_URL).origin
   : "";
 
@@ -17,7 +19,7 @@ const cspDirectives = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} https://accounts.google.com`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
-  `connect-src 'self' ${apiOrigin} https://*.sentry.io`,
+  `connect-src 'self' ${apiOrigin} https://*.sentry.io`.trim(),
   "frame-src https://accounts.google.com",
   "font-src 'self'",
 ].join("; ");
@@ -38,6 +40,8 @@ const securityHeaders = [
   },
 ];
 
+const backendUrl = process.env.BACKEND_URL;
+
 const nextConfig: NextConfig = {
   async headers() {
     return [
@@ -46,6 +50,19 @@ const nextConfig: NextConfig = {
         headers: securityHeaders,
       },
     ];
+  },
+  async rewrites() {
+    // Proxy /api/* to the backend in production.
+    // In dev, NEXT_PUBLIC_API_URL points directly to localhost:8000.
+    if (backendUrl) {
+      return [
+        {
+          source: "/api/:path*",
+          destination: `${backendUrl}/api/:path*`,
+        },
+      ];
+    }
+    return [];
   },
 };
 

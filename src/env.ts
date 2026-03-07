@@ -3,7 +3,7 @@ import { z } from "zod";
 const envSchema = z.object({
   NEXT_PUBLIC_API_URL: z
     .string()
-    .url("NEXT_PUBLIC_API_URL must be a valid URL"),
+    .min(1, "NEXT_PUBLIC_API_URL must not be empty"),
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z
     .string()
     .min(1, "NEXT_PUBLIC_GOOGLE_CLIENT_ID must not be empty"),
